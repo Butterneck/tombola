@@ -1,5 +1,4 @@
 /node_modules
 /npm-debug.log
 /src/shared/db-rooms/*.json
-/config.json
-/docker-compose.yml
+/data/shared/db-rooms/*.json

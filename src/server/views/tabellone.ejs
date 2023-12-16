@@ -4,8 +4,8 @@
             <table id="tavola"></table>
         </div>
         <div class="bottom-links mb-3">
-            <a class="link" href="/">&laquo; Home</a> / 
-            <span class="link" id="btnReset">Reset</span> / 
+            <a class="link" href="/">&laquo; Home</a> /
+            <span class="link" id="btnReset">Reset</span> /
             <span class="link" id="btnRefresh" data-state="on">Sincronizza: on</span>
         </div>
     </div>
@@ -15,7 +15,11 @@
             <h1 class="title">TOMBOLA!</h1>
             <div class="panel last-called">
                 <div class="btn-holder">
-                    <button class="btn call" id="btnCall">Estrai</button>
+                    <form id="extract_number_form" style="display:flex; justify-content: space-between;">
+                        <input type="text" name="extracted_num" placeholder="Numero estratto" class="form-input"
+                            autocomplete="off" id="extracted_num" style="margin-right: 1rem;" />
+                        <input type="submit" value="Estrai" class="btn" style="margin-bottom: 10px;" />
+                    </form>
                 </div>
                 <p>Ultimi estratti:</p>
                 <div id="last-called-holder">
@@ -32,8 +36,29 @@
     <h1>&nbsp;</h1>
 </div>
 
+<script>
+    $(document).ready(function () {
+        $('#extract_number_form').submit(function (e) {
+            e.preventDefault();
+
+            $.getJSON('/endpoint/board_extract_manual/?room_name=' + board_options.room_slug + '&number=' + $('#extracted_num').val(), function (res) {
+                if (res.status === 'OK') {
+                    printNum(res.data.board.last_called.toString(), '#last-called-holder', 'big-number');
+                    $('#number-' + res.data.board.last_called).addClass('called');
+                    last_called = res.data.board.last_called;
+                    $('#extracted_num').val('');
+                } else {
+                    console.log(res.message);
+                    if (res.status === 'WARN')
+                        showAlert(res.message);
+                }
+            });
+        });
+    });
+</script>
+
 <!-- Scripts -->
 <%- '<script>const board_options = ' + JSON.stringify(options.fe_opt) + '</script>' %>
-<script src="/public/vendor/jquery-3.4.1.min.js"></script>
-<script src="/public/script_tabellone.js"></script>
-<script src="/public/fullscreen.js"></script>
+    <script src="/public/vendor/jquery-3.4.1.min.js"></script>
+    <script src="/public/script_tabellone.js"></script>
+    <script src="/public/fullscreen.js"></script>

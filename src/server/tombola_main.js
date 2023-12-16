@@ -56,10 +56,7 @@ module.exports = class Tombola {
      * @returns {object}  Restituisce la struttura di un tabellone vuoto
      */
     genBoard () {
-        var board = { remaining_numbers: [], called_list: [], last_called: -1 };
-
-        for (var i = 1; i <= 90; i++) 
-            board.remaining_numbers.push(i);
+        var board = { called_list: [], last_called: -1 };
         
         return board;
     }
@@ -109,28 +106,5 @@ module.exports = class Tombola {
         }
 
         return card;
-    }
-
-    /** 
-     * Estrae uno o più numeri dal tabellone
-     * 
-     * @param {object} board_data   La struttura standard di un tabellone
-     * @param {number} [count]      Numeri da estrarre (default = 1)
-     * @returns {object}            Restituisce il tabellone modificato
-     */
-    extractNumber (board_data, count = 1) {
-        const tools = new this.RandTools();
-
-        for (var i = 0; i < count; i++) {
-            if (board_data.remaining_numbers.length > 0) {
-                tools.distRandInitStatic(board_data.remaining_numbers);
-
-                board_data.last_called = tools.distRandNext();
-                board_data.called_list.push(board_data.last_called);
-                board_data.remaining_numbers = tools.dist_rand;
-            } else return board_data;
-        }
-
-        return board_data;
     }
 }

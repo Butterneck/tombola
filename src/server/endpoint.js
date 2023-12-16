@@ -76,17 +76,16 @@ module.exports = class Endpoint {
                 } else return this.sendEndpoint(res, false, 'ERR', 'La stanza non esiste');
                 break;
 
-            /* Estrae un numero per il tabellone */
-            case 'board_extract':
+            /* Salva un numero estratto manualmente per il tabellone */
+            case 'board_extract_manual':
                 if (typeof params.room_name === 'undefined') return this.sendEndpoint(res, false, 'ERR', 'Nome della stanza obbligatorio');
+                if (typeof params.number === 'undefined') return this.sendEndpoint(res, false, 'ERR', 'Numero estratto obbligatorio');
 
                 the_room = Rooms.getRoom(params.room_name);
 
                 if (the_room !== false) {
-                    if (the_room.board.remaining_numbers.length == 0) return this.sendEndpoint(res, false, 'WARN', 'Tabellone pieno');
-
-                    const Tombola = new (require('./tombola_main.js'));
-                    the_room.board = Tombola.extractNumber(the_room.board);
+                    the_room.board.last_called = params.number;
+                    the_room.board.called_list.push(the_room.board.last_called);
                     Rooms.saveRoom(params.room_name, the_room);
 
                     result.data = { board: the_room.board };
